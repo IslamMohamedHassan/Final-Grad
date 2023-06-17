@@ -14,12 +14,14 @@ import UserForm from './COMPONENTS/UserForm/UserForm';
 import Shop from './COMPONENTS/Shop/Shop';
 import ShopContextProvider from './context/shop-context';
 import Cart from "./COMPONENTS/cart/cart";
+import ApiContextProvider from './context/api-context';
 
 const App = () => {
   return (
     <div className="background-container">
       <Navbar />
       <ShopContextProvider>
+      <ApiContextProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/blogging" element={<Blogging />} />
@@ -33,6 +35,7 @@ const App = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/cart"element={<Cart/>}/>
       </Routes>
+      </ApiContextProvider>
       </ShopContextProvider>
     </div>
   );
