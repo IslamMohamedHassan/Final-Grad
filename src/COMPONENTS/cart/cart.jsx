@@ -71,8 +71,7 @@ import { ApiContext } from '../../context/api-context';
 
  const UserTable = () => {
     const { userData, createData, updateData, deleteData } = useContext(ApiContext);
-    const users = userData && userData.data;
-
+  
     const [newUser, setNewUser] = useState({
         name: '',
         email: '',

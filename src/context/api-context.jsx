@@ -7,7 +7,7 @@ const apiUrl = "http://ah.khaledfathi.com/api/user"
 const ApiContextProvider = (props) => {
 
     const [userData, setUserData] = useState()
-    // console.log(userData);
+    console.log(userData);
     // const [users ,setUsers] = useState(userData && userData.data)
     const fetchData = async () => {
         const response = await ajax(apiUrl);
@@ -16,10 +16,8 @@ const ApiContextProvider = (props) => {
     }
 
     const createData = async (data) => {
-        // console.log(data);
-    
-        const response = await ajax(apiUrl, "POST",data);
-        console.log("response:", response);
+        console.log(data);
+        const response = await ajax(apiUrl, "post", data);
         const newData = await response.json()   ;
         setUserData([...userData, newData])
     }
@@ -41,7 +39,7 @@ const ApiContextProvider = (props) => {
         fetchData();
     }, [])
 
-    // console.log(userData)
+    console.log(userData)
 
     const contextValues = {
         userData,

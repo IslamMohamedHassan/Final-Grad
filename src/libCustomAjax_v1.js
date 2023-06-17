@@ -1,4 +1,4 @@
-/**
+    /**
  * custom ajax function for backend REST API 
  * @param {string} url 
  * @param {string} method [GET, POST, PUT, DELETE]
