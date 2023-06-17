@@ -175,7 +175,7 @@ import { ApiContext } from '../../context/api-context';
                                 <td>{user.email}</td>
                                 <td>{user.type}</td>
                                 <td>{user.phone}</td>
-                                <td>{user.image}</td>
+                                <td><img src={user.image} alt="dsa"/></td>
                                 <td>
                                     <button onClick={() => handleDeleteUser(user.id)}>delete</button>
                                 </td>
