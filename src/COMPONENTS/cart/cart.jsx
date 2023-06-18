@@ -65,32 +65,33 @@
 
 // export default Cart;
 
-import React, { useContext, useState } from 'react';
-import { Table } from 'react-bootstrap';
+import React, { useContext, useEffect, useState } from 'react';
+import { Spinner, Table } from 'react-bootstrap';
 import { ApiContext } from '../../context/api-context';
 
  const UserTable = () => {
     const { userData, createData, updateData, deleteData } = useContext(ApiContext);
   
     const [newUser, setNewUser] = useState({
-        name: '',
-        email: '',
-        type: '',
-        phone: '',
-        file: ''
+        name:"",
+        password:"",
+        email:"",
+        type:"",
+        phone:"",
     });
 
     const [editUser, setEditUser] = useState({
-        id: '',
-        name: '',
-        email: '',
-        type: '',
-        phone: '',
-        file: ''
+        name:"",
+        password:"",
+        email:"",
+        type:"",
+        phone:"",
     });
 
     const [showAddForm, setShowAddForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -98,29 +99,28 @@ import { ApiContext } from '../../context/api-context';
         setEditUser({ ...editUser, [name]: value });
     };
 
-    const handleAddUser = (event) => {
+    const handleAddUser = async (event) => {
         event.preventDefault();
-        createData(newUser);
+        await createData(newUser);
         setNewUser({
-            id: '',
-            name: '',
-            email: '',
-            type: '',
-            phone: '',
+            name:"",
+            password:"",
+            email:"",
+            type:"",
+            phone:"",
         });
         setShowAddForm(false);
     };
 
-    const handleEditUser = (event) => {
+    const handleEditUser = async (event) => {
         event.preventDefault();
-        updateData(editUser.id, editUser);
+        await updateData(editUser.id, editUser);
         setEditUser({
-            id: '',
-            name: '',
-            email: '',
-            type: '',
-            phone: '',
-            image: ''
+            name:"",
+            password:"",
+            email:"",
+            type:"",
+            phone:"",
         });
         setShowEditForm(false);
     };
@@ -128,6 +128,15 @@ import { ApiContext } from '../../context/api-context';
     const handleDeleteUser = (id) => {
         deleteData(id);
     };
+    useEffect(() => {
+        setIsLoading(true);
+    }, [userData]);
+
+    useEffect(() => {
+        if (userData) {
+            setIsLoading(false);
+        }
+    }, [userData]);
 
     return (
         <div>
@@ -143,15 +152,18 @@ import { ApiContext } from '../../context/api-context';
             {showAddForm && (
                 <form onSubmit={handleAddUser}>
 
-                    <input type="text" name="id" value={newUser.id} onChange={handleInputChange} />
+                    <input type="hidden" name="id" value={newUser.id} onChange={handleInputChange} />
                     <input type="text" name="name" value={newUser.name} onChange={handleInputChange} />
+                    <input type="password" name="password" value={newUser.password} onChange={handleInputChange} />
                     <input type="email" name="email" value={newUser.email} onChange={handleInputChange} />
                     <input type="text" name="type" value={newUser.type} onChange={handleInputChange} />
                     <input type="tel" name="phone" value={newUser.phone} onChange={handleInputChange} />
-                    <input type="file" name="file" value={newUser.image} onChange={handleInputChange} />
+                    {/* <input type="file" name="file" value={newUser.image} onChange={handleInputChange} /> */}
                     <button type="submit">Submit</button>
                 </form>
             )}
+            {isLoading ? (
+                <Spinner animation="border"/>) : (
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -192,7 +204,7 @@ import { ApiContext } from '../../context/api-context';
                             </tr>
                         ))}
                 </tbody>
-            </Table>
+            </Table>)}
             {showEditForm && (
                 <form onSubmit={handleEditUser}>
                     <input type="hidden" name="id" value={editUser.id} onChange={handleInputChange} />
@@ -200,7 +212,7 @@ import { ApiContext } from '../../context/api-context';
                     <input type="email" name="email" value={editUser.email} onChange={handleInputChange} />
                     <input type="text" name="type" value={editUser.type} onChange={handleInputChange} />
                     <input type="tel" name="phone" value={editUser.phone} onChange={handleInputChange} />
-                    <input type="text" name="image" value={editUser.image} onChange={handleInputChange} />
+                    {/* <input type="text" name="image" value={editUser.image} onChange={handleInputChange} /> */}
                     <button type="submit">Submit</button>
                 </form>
             )}
