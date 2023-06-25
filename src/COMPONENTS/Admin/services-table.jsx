@@ -31,9 +31,9 @@ const ServicesTable = () => {
         setServiceUpdated(true)
     };
 
-    const updateServiceData = async (id, updatedService) => {
+    const updateServiceData = async (id, updatedService , file) => {
 
-        const response = await ajax(`${serviceUrl}/${id}/update`, "post",serviceData );
+        const response = await ajax(`${serviceUrl}/${id}/update`, "post",updatedService , (file.value)?file:null );
         const updatedServiceData = await response.json();
         const updatedServiceList = serviceData.map((service) => (service.id === id ? updatedServiceData : service));
         setServiceData(updatedServiceList)
@@ -72,7 +72,6 @@ const ServicesTable = () => {
     });
 
     const [editService, setEditService] = useState({
-        id: null,
         user_id: "",
         name: "",
         phone: "",
@@ -117,8 +116,9 @@ const ServicesTable = () => {
 
     const handleEditSubmit = async (event) => {
         event.preventDefault();
+        const file = fileInputRef.current ;
         setIsLoading(true);
-        await updateServiceData(editService.id, editService);
+        await updateServiceData(editService.id, editService , file);
         setShowEditForm(false);
         setIsLoading(false);
     };
