@@ -29,19 +29,15 @@ const ProductsTable = () => {
  const createProduct = async (Product,file) => {
    file = (file.value)? file:null
    const response = await ajax(productUrl,"post",Product,file);
-   console.log(response);
    const newProduct = await response.json();
-   console.log(newProduct);
    setProductData((productData) => [...productData, newProduct]);
    setProductUpdated(true)
  };
 
  const updateProductData = async (id, updatedPro,file) => {
    file = (file.value)? file:null
-   const response = await ajax(`${productUrl}/${id}`,"post", updatedPro,file);
-   console.log(response);
+   const response = await ajax(`${productUrl}/${id}/update`,"post", updatedPro,file);
    const updatedProduct = await response.json();
-   console.log(updatedProduct);
    const updatedProductData = productData.map((product) => (product.id === id ? updatedProduct : product));
    setProductData(updatedProductData)
    setProductUpdated(true)
@@ -70,17 +66,14 @@ description: '',
 price: '',
 approval: '',
 category: '',
-// user_id: null,
 });
 
 const [editProduct, setEditProduct] = useState({
-id: '',
 name: '',
 description: '',
 price: '',
 approval: '',
 category: '',
-user_id: null,
 });
 
 const [showAddForm, setShowAddForm] = useState(false);
@@ -94,8 +87,7 @@ setEditProduct({ ...editProduct, [name]: value });
 };
 
 const handleAddProduct = async (event) => {
-    const file =
-    fileInputRef.current !== null ? fileInputRef.current : undefined;
+    const file = fileInputRef.current;
 event.preventDefault();
 await createProduct(newProduct,file);
 setNewProduct({
@@ -104,8 +96,6 @@ description: '',
 price: '',
 approval: '',
 category: '',
-// file: null,
-// user_id: null,
 });
 setShowAddForm(false);
 setIsLoading(false);
@@ -114,20 +104,19 @@ setIsLoading(false);
 const handleEditProduct = async (event) => {    
     event.preventDefault();
 
-    const file = fileInputRef.current !== null ? fileInputRef.current : undefined;
-
-await updateProductData(editProduct.id, editProduct,file);
-setEditProduct({
-id: '',
-name: '',
-description: '',
-price: '',
-approval: '',
-category: '',
-user_id: null,
-});
-setShowEditForm(false);
-setIsLoading(false);
+    const file = fileInputRef.current ? fileInputRef.current : null ;    
+    console.log(file); 
+    
+  await updateProductData(editProduct.id, editProduct, file );
+  setEditProduct({
+  name: '',
+  description: '',
+  price: '',
+  approval: '',
+  category: '',
+  });
+  setShowEditForm(false);
+  setIsLoading(false);
 } 
 
 
@@ -283,7 +272,7 @@ Delete
           </dev>
           <dev>
             <label>Image</label>
-            {/* <input type="file" name="file" ref={fileInputRef}/> */}
+            <input type="file" name="file" ref={fileInputRef}/>
           </dev>
           <button variant="primary" type="submit">
             Submit
