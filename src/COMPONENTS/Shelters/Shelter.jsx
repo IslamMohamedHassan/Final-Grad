@@ -70,9 +70,9 @@ const Shelters = () => {
     axios
       .get("http://ah.khaledfathi.com/api/service/filter/service_type/shelter")
       .then((res) => {
-        console.log(res.data.data);
+        
         setShelterCard(res.data.data);
-        console.log(shelterCard);
+        
       });
   }, []);
 

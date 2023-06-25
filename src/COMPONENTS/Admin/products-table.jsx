@@ -29,9 +29,9 @@ const ProductsTable = () => {
  const createProduct = async (Product,file) => {
    file = (file.value)? file:null
    const response = await ajax(productUrl,"post",Product,file);
-   console.log(response);
+   
    const newProduct = await response.json();
-   console.log(newProduct);
+   
    setProductData((productData) => [...productData, newProduct]);
    setProductUpdated(true)
  };
@@ -39,9 +39,9 @@ const ProductsTable = () => {
  const updateProductData = async (id, updatedPro,file) => {
    file = (file.value)? file:null
    const response = await ajax(`${productUrl}/${id}`,"post", updatedPro,file);
-   console.log(response);
+   
    const updatedProduct = await response.json();
-   console.log(updatedProduct);
+   
    const updatedProductData = productData.map((product) => (product.id === id ? updatedProduct : product));
    setProductData(updatedProductData)
    setProductUpdated(true)

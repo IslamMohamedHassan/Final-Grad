@@ -24,9 +24,9 @@ const ServicesTable = () => {
 
         file = (file.value)? file:null
         const response = await ajax(serviceUrl, "post", service,file);
-        console.log(response);
+        
         const newService = await response.json();
-        console.log(newService);
+        
         setServiceData((serviceData) => [...serviceData, newService]);
         setServiceUpdated(true)
     };
