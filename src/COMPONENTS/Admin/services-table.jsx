@@ -33,7 +33,7 @@ const ServicesTable = () => {
 
     const updateServiceData = async (id, updatedService) => {
 
-        const response = await ajax(`${serviceUrl}/${id}`, "post",serviceData );
+        const response = await ajax(`${serviceUrl}/${id}/update`, "post",serviceData );
         const updatedServiceData = await response.json();
         const updatedServiceList = serviceData.map((service) => (service.id === id ? updatedServiceData : service));
         setServiceData(updatedServiceList)
@@ -109,8 +109,7 @@ const ServicesTable = () => {
     const handleAddSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
-        const file =
-        fileInputRef.current !== null ? fileInputRef.current : undefined;
+        const file = fileInputRef.current;
         await createService(newService,file);
         setShowAddForm(false);
         setIsLoading(false);
