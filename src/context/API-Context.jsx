@@ -51,7 +51,7 @@ const ApiContextProvider = (props) => {
         file = (file.value)? file:null
         const response = await ajax(servicesUrl, "post", data,file);
         const newData = await response.json();
-        console.log(newData);
+        
     }
 
 const updateData = async (id, data,file) => {

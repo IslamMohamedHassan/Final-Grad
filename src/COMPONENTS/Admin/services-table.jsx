@@ -24,16 +24,16 @@ const ServicesTable = () => {
 
         file = (file.value)? file:null
         const response = await ajax(serviceUrl, "post", service,file);
-        console.log(response);
+        
         const newService = await response.json();
-        console.log(newService);
+        
         setServiceData((serviceData) => [...serviceData, newService]);
         setServiceUpdated(true)
     };
 
-    const updateServiceData = async (id, updatedService) => {
+    const updateServiceData = async (id, updatedService , file) => {
 
-        const response = await ajax(`${serviceUrl}/${id}`, "post",serviceData );
+        const response = await ajax(`${serviceUrl}/${id}/update`, "post",updatedService , (file.value)?file:null );
         const updatedServiceData = await response.json();
         const updatedServiceList = serviceData.map((service) => (service.id === id ? updatedServiceData : service));
         setServiceData(updatedServiceList)
@@ -72,7 +72,6 @@ const ServicesTable = () => {
     });
 
     const [editService, setEditService] = useState({
-        id: null,
         user_id: "",
         name: "",
         phone: "",
@@ -109,8 +108,7 @@ const ServicesTable = () => {
     const handleAddSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
-        const file =
-        fileInputRef.current !== null ? fileInputRef.current : undefined;
+        const file = fileInputRef.current;
         await createService(newService,file);
         setShowAddForm(false);
         setIsLoading(false);
@@ -118,8 +116,9 @@ const ServicesTable = () => {
 
     const handleEditSubmit = async (event) => {
         event.preventDefault();
+        const file = fileInputRef.current ;
         setIsLoading(true);
-        await updateServiceData(editService.id, editService);
+        await updateServiceData(editService.id, editService , file);
         setShowEditForm(false);
         setIsLoading(false);
     };

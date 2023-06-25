@@ -5,10 +5,11 @@ import "./Profile.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import {
-  getSession
+  getSession, setSession
 } from "../../helper";
 import { ApiContext } from "../../context/API-Context";
 import { constants } from "../../constants";
+import { ajax } from "../../libCustomAjax_v1";
 
 const URL = constants.API_HOST;
 
@@ -29,7 +30,7 @@ const ShelterProfile = () => {
 
   /*******************/
 
-  const { addServiceData, updateData, dataUpdated } = useContext(ApiContext);
+  const {dataUpdated } = useContext(ApiContext);
   const [editMode, setEditMode] = useState(false);
   const [showForm, setShowForm] = useState(false);
   // const [dataUpdated, setDataUpdated] = useState(false)
@@ -38,6 +39,49 @@ const ShelterProfile = () => {
 
   const [profileImage, setProfileImage] = useState("./Images/profile.webp");
   const fileInputRef = useRef(null);
+
+/* ########## Start Khaled ################################### */ 
+  //user data carier , states
+  const [updateUserMessage  , setUpddateUserMessage]= useState(null); 
+  const [updateUserWatingIndecator  , setUpdateUserWatingIndecator]= useState(null); 
+  //service data carier , states
+  // const [updateServiceMessage  , setUpdateSrviceMessage]= useState([]); 
+  const [updateServiceWatingIndecator  , setUpdateServiceWatingIndecator]= useState(null); 
+  const [updateServiceMessage  , setUpdateSrviceMessage]= useState([]); 
+  
+  //Action for update user(API and page)
+  const updateUserDate = async (id, data,file) => {
+        setUpdateUserWatingIndecator(true); 
+        setUpddateUserMessage(null); 
+        file = (file.value)? file:null
+        const request = await ajax(URL+ "/api/user/" + id + "/update", "POST", data,file);
+        const  response = await request.json();
+        if(response.status){
+          setUpdateUserWatingIndecator(false); 
+          setSession("auth" , response.record); 
+          setAuth(response.record);           
+        }else{
+          setUpdateUserWatingIndecator(false); 
+          setUpddateUserMessage( response.msg); 
+        }
+    }
+
+    //Action for update user(API and page)
+    const addServiceData = async (data,file) => {
+        setUpdateServiceWatingIndecator(true); 
+        file = (file.value)? file:null
+        const request = await ajax(URL+'/api/service', "post", data,file);
+        const response = await request.json();        
+        if(response.status){
+          setUpdateServiceWatingIndecator(false); 
+          setUpdateServiceWatingIndecator(false); 
+        }else{
+          setUpdateServiceWatingIndecator(false); 
+          setUpdateSrviceMessage(response.errors); 
+        }
+ }
+/* ########## End Khaled ################################### */ 
+
 
   const handleEdit = () => {
     setEditMode(true);
@@ -50,6 +94,11 @@ const ShelterProfile = () => {
   const handleSave = () => {
     // Perform validation and save changes
     setEditMode(false);
+    /* ########## Start Khaled ################################### */ 
+    //remove any message from edit user form
+    setUpddateUserMessage(null); 
+    setUpddateUserMessage(null); 
+    /* ########## End Khaled ################################### */ 
   };
 
   const [newShelter, setNewShelter] = useState({
@@ -75,7 +124,7 @@ const ShelterProfile = () => {
     const file =
       fileInputRef.current !== null ? fileInputRef.current : undefined;
     /******/
-    await updateData(editUser.id, editUser, file);
+    await updateUserDate(editUser.id, editUser, file);
     /******/
   };
 
@@ -86,9 +135,12 @@ const ShelterProfile = () => {
   };
 
   const handleAddShelter = async (event) => {
+    setUpdateSrviceMessage([]); 
+
     event.preventDefault();
     const file =
-      fileInputRef.current !== null ? fileInputRef.current : undefined;
+      fileInputRef.current !== null ? fileInputRef.current : null;
+    
     await addServiceData(newShelter, file);
     setNewShelter({
       name: "",
@@ -108,6 +160,7 @@ const ShelterProfile = () => {
   };
 
   const handleSaveShelter = () => {
+    setUpdateSrviceMessage([]); 
     // Perform validation and save shelter data
     setShowForm(false);
   };
@@ -253,6 +306,16 @@ const ShelterProfile = () => {
                 onChange={handleInputChange}
                 hidden
               />
+
+              {/* ### Start Kahled###################################### */}
+                  {updateUserWatingIndecator ?
+                    <h5 style={{'margin':'10px 0px', 'textAlign':'center' }}>Please Wait . . . </h5>:null
+                  }
+                  {updateUserMessage ?
+                    <h5 style={{'margin':'10px 0px', 'color':'red','textAlign':'center' }}>{updateUserMessage}</h5>:null
+                  }
+              {/* ### End Kahled###################################### */}
+
               <input
                 className="save"
                 type="submit"
@@ -384,6 +447,22 @@ const ShelterProfile = () => {
               <i className="fas fa-upload"></i> Choose Image
             </span>
           </label>
+
+          {/* ### Start Kahled###################################### */}
+            {updateServiceWatingIndecator ?
+              <h5 style={{'margin':'10px 0px', 'textAlign':'center' }}>Please Wait . . . </h5>:null
+            }
+            {updateServiceMessage ?
+              <h5 style={{'margin':'10px 0px', 'color':'red' }}>
+                 {
+                   updateServiceMessage.map((error , index )=>(
+                    <span key={index}>- {error}<br/></span>
+                   )) 
+                 }
+                </h5>:null
+            }
+          {/* ### End Kahled###################################### */}
+
           <button
             className="save"
             onClick={handleAddShelter}>
