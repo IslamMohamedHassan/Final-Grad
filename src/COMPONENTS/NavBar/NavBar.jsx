@@ -95,7 +95,7 @@ const Navtest = () => {
               </li>
             ) : (
               <li className="nav-item">
-                <a className="nav-link" href="./login">
+                <a className="nav-link" href="/login">
                   <FontAwesomeIcon icon={faCircleUser} size="xl" />
                 </a>
               </li>
