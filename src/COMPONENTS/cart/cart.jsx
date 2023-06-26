@@ -19,18 +19,20 @@ const Cart = () => {
       </div>
       <div className="cartProduct">
         {productItems.map((product) => {
-          if (cartItems[product.id] !== 0) {
+          if (cartItems[product.id] !== 0 && cartItems[product.id] !== null) {  
             return (
               <CartItem
                 key={product.id}
                 data={{ ...product }}
+                
               />
             );
           } else {
-            return null;
+            return ;
           }
         })}
       </div>
+
       <div className="text-center mt-5">
         <p style={{ fontSize: "2rem" }}>
           SubTotal:{" "}

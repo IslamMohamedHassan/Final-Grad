@@ -1,464 +1,512 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Spinner, Table, form, button, Col, Row } from 'react-bootstrap';
-import { ajax } from '../../libCustomAjax_v1';
-import { constants } from '../../constants';
+/** @format */
 
-const URL = constants.API_HOST; 
-const serviceUrl = URL+"/api/service"
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Spinner, Table, form, Button, Col, Row } from "react-bootstrap";
+import { ajax } from "../../libCustomAjax_v1";
+import { constants } from "../../constants";
+
+const URL = constants.API_HOST;
+const serviceUrl = URL + "/api/service";
 
 const ServicesTable = () => {
+  const [serviceData, setServiceData] = useState(null);
+  const [serviceUpdated, setServiceUpdated] = useState(false);
+  const fileInputRef = useRef(null);
 
-    const [serviceData, setServiceData] = useState(null);
-    const [serviceUpdated, setServiceUpdated] = useState(false)
-    const fileInputRef = useRef(null);
+  const fetchServiceData = async () => {
+    const response = await ajax(serviceUrl);
+    const data = await response.json();
+    setServiceData(data.data);
+  };
 
+  const createService = async (service, file) => {
+    file = file.value ? file : null;
+    const response = await ajax(serviceUrl, "post", service, file);
 
-    const fetchServiceData = async () => {
-        const response = await ajax(serviceUrl);
-        const data = await response.json();
-        setServiceData(data.data)  
+    const newService = await response.json();
+console.log(newService);
+    setServiceData((serviceData) => [...serviceData, newService]);
+    setServiceUpdated(true);
+  };
+
+  const updateServiceData = async (id, updatedService, file) => {
+    const response = await ajax(
+      `${serviceUrl}/${id}/update`,
+      "post",
+      updatedService,
+      file.value ? file : null
+    );
+    const updatedServiceData = await response.json();
+    console.log(updatedServiceData);
+    const updatedServiceList = serviceData.map((service) =>
+      service.id === id ? updatedServiceData : service
+    );
+    setServiceData(updatedServiceList);
+    setServiceUpdated(true);
+  };
+
+  const deleteService = async (id) => {
+    await ajax(`${serviceUrl}/${id}`, "delete");
+    setServiceData(serviceData.filter((service) => service.id !== id));
+    setServiceUpdated(true);
+  };
+
+  useEffect(() => {
+    fetchServiceData();
+  }, []);
+
+  useEffect(() => {
+    if (serviceUpdated) {
+      fetchServiceData();
+      setServiceUpdated(false);
     }
+  }, [serviceUpdated]);
 
-    const createService = async (service,file) => {
+  const [newService, setNewService] = useState({
+    user_id: "",
+    name: "",
+    phone: "",
+    address: "",
+    working_hours: "",
+    description: "",
+    service_type: "",
+    animal_type: "",
+    approval: "",
+    image: null,
+  });
 
+  const [editService, setEditService] = useState({
+    user_id: "",
+    name: "",
+    phone: "",
+    address: "",
+    working_hours: "",
+    description: "",
+    service_type: "",
+    animal_type: "",
+    approval: "",
+    image: null,
+  });
 
-        file = (file.value)? file:null
-        const response = await ajax(serviceUrl, "post", service,file);
-        
-        const newService = await response.json();
-        
-        setServiceData((serviceData) => [...serviceData, newService]);
-        setServiceUpdated(true)
-    };
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const updateServiceData = async (id, updatedService , file) => {
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setNewService((prevService) => ({
+      ...prevService,
+      [name]: value,
+    }));
+  };
 
-        const response = await ajax(`${serviceUrl}/${id}/update`, "post",updatedService , (file.value)?file:null );
-        const updatedServiceData = await response.json();
-        const updatedServiceList = serviceData.map((service) => (service.id === id ? updatedServiceData : service));
-        setServiceData(updatedServiceList)
-        setServiceUpdated(true)
-    };
+  const handleEditInputChange = (event) => {
+    const { name, value } = event.target;
+    setEditService((prevService) => ({
+      ...prevService,
+      [name]: value,
+    }));
+  };
 
-    const deleteService = async (id) => {
-        await ajax(`${serviceUrl}/${id}`,"delete");
-        setServiceData(serviceData.filter((service) => service.id !== id));
-        setServiceUpdated(true)
-    };
+  const handleAddSubmit = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    const file = fileInputRef.current;
+    await createService(newService, file);
+    setShowAddForm(false);
+    setIsLoading(false);
+  };
 
-    useEffect(() => {
-        fetchServiceData();
-    }, [])
+  const handleEditSubmit = async (event) => {
+    event.preventDefault();
+    const file = fileInputRef.current;
+    setIsLoading(true);
+    await updateServiceData(editService.id, editService, file);
+    setShowEditForm(false);
+    setIsLoading(false);
+  };
 
-    useEffect(() => {
-        if(serviceUpdated){
-            fetchServiceData();
-            setServiceUpdated(false)
-        }
-    }, [serviceUpdated])
+  const handleEditClick = (service) => {
+    setEditService(service);
+    setShowEditForm(true);
+  };
 
+  const handleDeleteClick = async (id) => {
+    setIsLoading(true);
+    await deleteService(id);
+    setIsLoading(false);
+  };
 
-    const [newService, setNewService] = useState({
-        user_id: '',
-        name: '',
-        phone: '',
-        address: '',
-        working_hours: '',
-        description: '',
-        service_type: '',
-        animal_type: '',
-        approval: '',
-        image: null,
-    });
+  return (
+    <div >
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <button
+          className="btn btn-success m-3"
+          onClick={() => setShowAddForm(true)}>
+          Add Service
+        </button>
+      </div>
 
-    const [editService, setEditService] = useState({
-        user_id: "",
-        name: "",
-        phone: "",
-        address: "",
-        working_hours: "",
-        description: "",
-        service_type: "",
-        animal_type: "",
-        approval: "",
-        image: null,
-      });
+      {showAddForm && (
+        <form onSubmit={handleAddSubmit} className="container">
+          <Row>
+            <Col>
+              <div className="form-group">
+                <label className="my-2">User ID:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="user_id"
+                  value={newService.user_id}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-    const [showAddForm, setShowAddForm] = useState(false);
-    const [showEditForm, setShowEditForm] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+              <div className="form-group">
+                <label className="my-2">Name:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="name"
+                  value={newService.name}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setNewService((prevService) => ({
-            ...prevService,
-            [name]: value,
-        }));
-    };
+              <div className="form-group">
+                <label className="my-2">Phone:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="phone"
+                  value={newService.phone}
+                  onChange={handleInputChange}
+                />
+              </div>
 
+              <div className="form-group">
+                <label className="my-2">Address:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="address"
+                  value={newService.address}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-    const handleEditInputChange = (event) => {
-        const { name, value } = event.target;
-        setEditService((prevService) => ({
-            ...prevService,
-            [name]: value,
-        }));
-    };
+              <div className="form-group">
+                <label className="my-2">Working Hours:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="working_hours"
+                  value={newService.working_hours}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-    const handleAddSubmit = async (event) => {
-        event.preventDefault();
-        setIsLoading(true);
-        const file = fileInputRef.current;
-        await createService(newService,file);
-        setShowAddForm(false);
-        setIsLoading(false);
-    };
+              <div className="form-group">
+                <label className="my-2">Description:</label>
+                <textarea
+                  className="form-control"
+                  name="description"
+                  value={newService.description}
+                  onChange={handleInputChange}
+                />
+              </div>
 
-    const handleEditSubmit = async (event) => {
-        event.preventDefault();
-        const file = fileInputRef.current ;
-        setIsLoading(true);
-        await updateServiceData(editService.id, editService , file);
-        setShowEditForm(false);
-        setIsLoading(false);
-    };
+              <div className="form-group">
+                <label className="my-2">Service Type:</label>
+                <select
+                  className="form-control"
+                  id="service_type"
+                  name="service_type"
+                  value={newService.service_type}
+                  onChange={handleInputChange}
+                  required>
+                  <option value="">Select Service Type</option>
+                  <option value="clinics">Clinics</option>
+                  <option value="shelter">Shelter</option>
+                </select>
+              </div>
 
-    const handleEditClick = (service) => {
-        setEditService(service);
-        setShowEditForm(true);
-    };
+              <div className="form-group">
+                <label className="my-2">Animal Type:</label>
 
-    const handleDeleteClick = async (id) => {
-        setIsLoading(true);
-        await deleteService(id);
-        setIsLoading(false);
-    };
+                <select
+                  className="form-control"
+                  id="animal_type"
+                  name="animal_type"
+                  value={newService.animal_type}
+                  onChange={handleInputChange}>
+                  <option value="">Select Animal Type</option>
+                  <option value="cat">Cat</option>
+                  <option value="dog">Dog</option>
+                </select>
+              </div>
 
-    return (
-        <div>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h3>Services</h3>
-                <button className="btn btn-success" onClick={() => setShowAddForm(true)}>
-                    Add Service
-                </button>
-            </div>
+              <div className="form-group">
+                <label className="my-2">Approval:</label>
 
-            {showAddForm && (
-                <form onSubmit={handleAddSubmit}>
-                    <Row>
-                        <Col>
-                            <div className="form-group">
-                                <label>User ID:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="user_id"
-                                    value={newService.user_id}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+                <select
+                  className="form-control"
+                  id="approval"
+                  name="approval"
+                  value={newService.approval}
+                  onChange={handleInputChange}>
+                  <option value="">Select Approval Status</option>
+                  <option value="approved">Approved</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
 
-                            <div className="form-group">
-                                <label>Name:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="name"
-                                    value={newService.name}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <div className="form-group">
+                <label className="my-2">Image:</label>
+                <input
+                  type="file"
+                  className="form-control-file"
+                  name="image"
+                  // onChange={handleImageChange}
+                  ref={fileInputRef}
+                />
+              </div>
 
-                            <div className="form-group">
-                                <label>Phone:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="phone"
-                                    value={newService.phone}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <button
+                type="submit"
+                className="btn btn-primary">
+                {isLoading ? (
+                  <Spinner
+                    animation="border"
+                    size="sm"
+                  />
+                ) : (
+                  "Submit"
+                )}
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary ml-2"
+                onClick={() => setShowAddForm(false)}>
+                Cancel
+              </button>
+            </Col>
+          </Row>
+        </form>
+      )}
+      {showEditForm && (
+        <form onSubmit={handleEditSubmit}>
+          <Row>
+            <Col>
+              <div className="form-group">
+                <label className="my-2">User ID:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="user_id"
+                  value={editService.user_id}
+                  onChange={handleEditInputChange}
+                />
+              </div>
 
-                            <div className="form-group">
-                                <label>Address:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="address"
-                                    value={newService.address}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <div className="form-group">
+                <label className="my-2">Name:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="name"
+                  value={editService.name}
+                  onChange={handleEditInputChange}
+                />
+              </div>
 
-                            <div className="form-group">
-                                <label>Working Hours:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="working_hours"
-                                    value={newService.working_hours}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <div className="form-group">
+                <label className="my-2">Phone:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="phone"
+                  value={editService.phone}
+                  onChange={handleEditInputChange}
+                />
+              </div>
 
-                            <div className="form-group">
-                                <label>Description:</label>
-                                <textarea
-                                    className="form-control"
-                                    name="description"
-                                    value={newService.description}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <div className="form-group">
+                <label className="my-2">Address:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="address"
+                  value={editService.address}
+                  onChange={handleEditInputChange}
+                />
+              </div>
 
-                            <div className="form-group">
-                                <label>Service Type:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="service_type"
-                                    value={newService.service_type}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <div className="form-group">
+                <label className="my-2">Working Hours:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="working_hours"
+                  value={editService.working_hours}
+                  onChange={handleEditInputChange}
+                />
+              </div>
 
-                            <div className="form-group">
-                                <label>Animal Type:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="animal_type"
-                                    value={newService.animal_type}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <div className="form-group">
+                <label className="my-2">Description:</label>
+                <textarea
+                  className="form-control"
+                  name="description"
+                  value={editService.description}
+                  onChange={handleEditInputChange}
+                />
+              </div>
 
-                            <div className="form-group">
-                                <label>Approval:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    name="approval"
-                                    value={newService.approval}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+              <div className="form-group">
+                <label className="my-2">Service Type:</label>
+                <select
+                  className="form-control"
+                  id="service_type"
+                  name="service_type"
+                  value={editService.service_type}
+                  onChange={handleEditInputChange}
+                  required>
+                  <option value="">Select Service Type</option>
+                  <option value="clinics">Clinics</option>
+                  <option value="shelter">Shelter</option>
+                </select>
+              </div>
 
-                            <div className="form-group">
-                                <label>Image:</label>
-                                <input
-                                    type="file"
-                                    className="form-control-file"
-                                    name="image"
-                                    // onChange={handleImageChange}
-                                    ref={fileInputRef}
-                                />
-                            </div>
+              <div className="form-group">
+                <select
+                  className="form-control"
+                  id="animal_type"
+                  name="animal_type"
+                  value={editService.animal_type}
+                  onChange={handleEditInputChange}>
+                  <option value="">Select Animal Type</option>
+                  <option value="cat">Cat</option>
+                  <option value="dog">Dog</option>
+                </select>
+              </div>
 
-                            <button type="submit" className="btn btn-primary">
-                                {isLoading ? <Spinner animation="border" size="sm" /> : 'Submit'}
-                            </button>
-                            <button
-                                type="button"
-                                className="btn btn-secondary ml-2"
-                                onClick={() => setShowAddForm(false)}
-                                >
-                                Cancel
-                                </button>
-                                </Col>
-                                </Row>
-                                </form>
-                                )}
-                                {showEditForm && (
-            <form onSubmit={handleEditSubmit}>
-                <Row>
-                    <Col>
-                        <div className="form-group">
-                            <label>User ID:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="user_id"
-                                value={editService.user_id}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
+              <div className="form-group">
+                <label className="my-2">Approval:</label>
+                <select
+                  className="form-control"
+                  id="approval"
+                  name="approval"
+                  value={editService.approval}
+                  onChange={handleEditInputChange}>
+                  <option value="">Select Approval Status</option>
+                  <option value="approved">Approved</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
 
-                        <div className="form-group">
-                            <label>Name:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="name"
-                                value={editService.name}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
+              <div className="form-group">
+                <label className="my-2">Image:</label>
+                <input
+                  type="file"
+                  className="form-control-file"
+                  name="image"
+                  // onChange={handleEditImageChange}
+                  ref={fileInputRef}
+                />
+              </div>
 
-                        <div className="form-group">
-                            <label>Phone:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="phone"
-                                value={editService.phone}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
+              <button
+                type="submit"
+                className="btn btn-primary">
+                {isLoading ? (
+                  <Spinner
+                    animation="border"
+                    size="sm"
+                  />
+                ) : (
+                  "Submit"
+                )}
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary ml-2"
+                onClick={() => setShowEditForm(false)}>
+                Cancel
+              </button>
+            </Col>
+          </Row>
+        </form>
+      )}
 
-                        <div className="form-group">
-                            <label>Address:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="address"
-                                value={editService.address}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
+      <Table
+        striped
+        bordered
+        hover
+        className="container admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Working Hours</th>
+            <th>Description</th>
+            <th>Service Type</th>
+            <th>Animal Type</th>
+            <th>Approval</th>
+            <th>Image</th>
+            <th>Delete</th>
+            <th>Update</th>
+          </tr>
+        </thead>
+        <tbody>
+          {serviceData &&
+            serviceData.map((service) => (
+              <tr key={service.id}>
+                <td>{service.id}</td>
+                <td>{service.user_id}</td>
+                <td>{service.name}</td>
+                <td>{service.phone}</td>
+                <td>{service.address}</td>
+                <td>{service.working_hours}</td>
+                <td>{service.description}</td>
+                <td>{service.service_type}</td>
+                <td>{service.animal_type}</td>
+                <td>{service.approval}</td>
+                <td>
+                  {service.image && (
+                    <img
+                    className="p-Image"
+                      src={`${URL}/${service.image}`}
+                      alt={`Service ${service.id} image`}
+                    />
+                  )}
+                </td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteClick(service.id)}>
+                    Delete
+                  </button>
+                </td>
+                <td>
+                  <button
+                    className="btn btn-primary mr-2"
+                    onClick={() => handleEditClick(service)}>
+                    Update
+                  </button>
+                  </td>
 
-                        <div className="form-group">
-                            <label>Working Hours:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="working_hours"
-                                value={editService.working_hours}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Description:</label>
-                            <textarea
-                                className="form-control"
-                                name="description"
-                                value={editService.description}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Service Type:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="service_type"
-                                value={editService.service_type}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Animal Type:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="animal_type"
-                                value={editService.animal_type}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Approval:</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="approval"
-                                value={editService.approval}
-                                onChange={handleEditInputChange}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Image:</label>
-                            <input
-                                type="file"
-                                className="form-control-file"
-                                name="image"
-                                // onChange={handleEditImageChange}
-                                ref={fileInputRef}
-                            />
-                        </div>
-
-                        <button type="submit" className="btn btn-primary">
-                            {isLoading ? <Spinner animation="border" size="sm" /> : 'Submit'}
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-secondary ml-2"
-                            onClick={() => setShowEditForm(false)}
-                        >
-                            Cancel
-                        </button>
-                    </Col>
-                </Row>
-            </form>
-        )}
-
-        <Table striped bordered hover>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>User ID</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                    <th>Working Hours</th>
-                    <th>Description</th>
-                    <th>Service Type</th>
-                    <th>Animal Type</th>
-                    <th>Approval</th>
-                    <th>Image</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {serviceData &&
-                    serviceData.map((service) => (
-                        <tr key={service.id}>
-                            <td>{service.id}</td>
-                            <td>{service.user_id}</td>
-                            <td>{service.name}</td>
-                            <td>{service.phone}</td>
-                            <td>{service.address}</td>
-                            <td>{service.working_hours}</td>
-                            <td>{service.description}</td>
-                            <td>{service.service_type}</td>
-                            <td>{service.animal_type}</td>
-                            <td>{service.approval}</td>
-                            <td>
-                                {service.image && (
-                                    <img
-                                        src={`${URL}/${service.image}`}
-                                        alt={`Service ${service.id} image`}
-                                        width="50"
-                                        height="50"
-                                    />
-                                )}
-                            </td>
-                            <td>
-                                <button
-                                    className="btn btn-primary mr-2"
-                                    onClick={() => handleEditClick(service)}
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={() => handleDeleteClick(service.id)}
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-            </tbody>
-        </Table>
-        </div>
-);
+              </tr>
+            ))}
+        </tbody>
+      </Table>
+    </div>
+  );
 };
 
 export default ServicesTable;

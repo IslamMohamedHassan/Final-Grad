@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 const Navtest = () => {
   const [t, i18n] = useTranslation();
   return (
+    <>
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid justify-content-end">
         <a className="navbar-brand" href="/">
@@ -155,6 +156,13 @@ const Navtest = () => {
         )}
       </div> */}
     </nav>
+    <br/>
+    <br/>
+    <br/>
+    <div></div>
+    </>
+
+    
   );
 };
 

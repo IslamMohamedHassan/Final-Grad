@@ -1,0 +1,9 @@
+.p-Image{
+    width: 150px;
+    height: 150px;
+}
+.admin-table th,
+.admin-table td
+{
+    text-align: center;
+}

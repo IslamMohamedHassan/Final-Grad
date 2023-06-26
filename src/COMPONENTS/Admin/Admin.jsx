@@ -3,15 +3,21 @@ import { Link, Route, Routes } from 'react-router-dom';
 import ProductsTable from './products-table';
 import UsersTable from './users-table';
 import ServicesTable from './services-table';
+import Navtest from '../NavBar/NavBar';
+
 // import Blogs from './COMPONENTS/Admin/Blogs';
 
 const Admin = () => {
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <button className='btn btn-danger'><Link to="users">Users</Link></button>
-      <button className='btn btn-danger'><Link to="products">products</Link></button>
-      <button className='btn btn-danger'><Link to="services">services</Link></button>
+    <div >
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <h1 className='m-3'>Admin Dashboard</h1>
+      <button className='btn btn-danger m-3 '><Link to="users" className='text-decoration-none text-white'>Users</Link></button>
+      <button className='btn btn-danger m-3'><Link to="products"className='text-decoration-none text-white'>products</Link></button>
+      <button className='btn btn-danger m-3'><Link to="services"className='text-decoration-none text-white'>services</Link></button>
       <Routes>
         <Route path="products" element={<ProductsTable/>} />
         <Route path="users" element={<UsersTable/>} />

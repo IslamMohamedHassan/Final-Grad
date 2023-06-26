@@ -9,11 +9,11 @@ const Navtest = () => {
   return (
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        <div class="navbar-brand" href="#">
+        <div class="navbar-brand">
           <img
             className="nav navimg"
-            src="Images/LOGO.png"
-            alt="Description "
+            src="Ima/LOGO.png"
+            alt="."
           />
         </div>
         <button
