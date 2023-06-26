@@ -33,7 +33,7 @@ const Works = () => {
               data-aos="fade-up"
             >
               <img
-                src="images/search.webp"
+                src="Images/search.webp"
                 alt="Image 1"
                 className="F-img"
               />
@@ -49,7 +49,7 @@ const Works = () => {
               data-aos="fade-up"
             >
               <img
-                src="images/book.webp"
+                src="Images/book.webp"
                 alt="Image 2"
               />
               <h3 className="works-title">{t("Book & Pay")}</h3>
@@ -64,7 +64,7 @@ const Works = () => {
               data-aos="fade-up"
             >
               <img
-                src="images/relax.webp"
+                src="Images/relax.webp"
                 alt="Image 3"
               />
               <h3 className="works-title">{t("Relax")}</h3>

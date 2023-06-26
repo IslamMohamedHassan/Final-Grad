@@ -6,11 +6,9 @@ import { ApiContext } from "../../context/API-Context";
 import { setSession, getSession, removeSession, getCurrentTime } from "../../helper";
 import { ajax } from "../../libCustomAjax_v1";
 
-/* ### Start Khaled ########################################### */
 import { constants } from "../../constants";
 import "./loginResult.css";
 const URL = constants.API_HOST; 
-/* ### End Khaled ########################################### */
 
 //component
 const Login = () => {
@@ -41,7 +39,6 @@ const Login = () => {
   }
 
 
-  /* ### Start Khaled ########################################### */
   //data carier 
   const [loginMessage  , setLoginMessage]= useState(null); 
   const [loginWatingIndecator  , setLoginWatingIndecator]= useState(null); 
@@ -76,7 +73,6 @@ const Login = () => {
     e.preventDefault();
     await login(data);
   };
-  /* ### End Khaled ########################################### */
 
   return (
     <div className={styles.login}>
@@ -84,7 +80,6 @@ const Login = () => {
       <div className={styles["login-container"]}>
         <div className={`${styles["form-container"]} ${styles["login-form"]}`}>
           
-          {/* ### Start Khaled ########################################### */}
             { loginWatingIndecator ? 
                 <h4>Please Wait . . . </h4>:null
             }

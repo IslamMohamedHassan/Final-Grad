@@ -12,7 +12,7 @@ const Navtest = () => {
         <div class="navbar-brand">
           <img
             className="nav navimg"
-            src="Ima/LOGO.png"
+            src="/home/islam/Desktop/project/Final-Grad/public/Images/logo-remo.png"
             alt="."
           />
         </div>

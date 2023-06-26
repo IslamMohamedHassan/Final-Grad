@@ -93,12 +93,16 @@ const UsersTable = () => {
   return (
     <div>
       <div className="m-3">
-        <Button className="btn btn-success" onClick={() => setShowAddForm(true)}>Add User</Button>
+        <Button
+          className="btn btn-success"
+          onClick={() => setShowAddForm(true)}>
+          Add User
+        </Button>
       </div>
       {showAddForm && (
         <Form
           onSubmit={handleAddUser}
-          className="container">
+          className="container my-4">
           <Row>
             <Col>
               <FormGroup>
@@ -119,6 +123,15 @@ const UsersTable = () => {
                   onChange={handleInputChange}
                 />
               </FormGroup>
+              <FormGroup>
+                <Label for="phone">Phone:</Label>
+                <Input
+                  type="tel"
+                  name="phone"
+                  value={newUser.phone}
+                  onChange={handleInputChange}
+                />
+              </FormGroup>
             </Col>
             <Col>
               <FormGroup>
@@ -132,21 +145,18 @@ const UsersTable = () => {
               </FormGroup>
               <FormGroup>
                 <Label for="type">Type:</Label>
-                <Input
-                  type="text"
+
+                <select
+                className="form-select"
                   name="type"
                   value={newUser.type}
-                  onChange={handleInputChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="phone">Phone:</Label>
-                <Input
-                  type="tel"
-                  name="phone"
-                  value={newUser.phone}
-                  onChange={handleInputChange}
-                />
+                  onChange={handleInputChange}>
+                  <option value="">Select Type</option>
+                  <option value="user">user</option>
+                  <option value="suppler">Supplier</option>
+                  <option value="clinics">Clinics</option>
+                  <option value="shelter">Shelter</option>
+                </select>
               </FormGroup>
               {/* <FormGroup>
                                 <Label for="image">Image:</Label>
@@ -182,7 +192,7 @@ const UsersTable = () => {
           striped
           bordered
           hover
-          className='admin-table container'>
+          className="admin-table container mb-5">
           <thead>
             <tr>
               <th>ID</th>
@@ -190,7 +200,7 @@ const UsersTable = () => {
               <th>Email</th>
               <th>Type</th>
               <th>Phone</th>
-              <th>Image</th>
+              {/* <th>Image</th> */}
               <th>Delete</th>
               <th>Update</th>
             </tr>
@@ -204,23 +214,26 @@ const UsersTable = () => {
                   <td>{user.email}</td>
                   <td>{user.type}</td>
                   <td>{user.phone}</td>
-                  <td>
+                  {/* <td>
                     <img
                       className="p-Image"
                       src={`${URL}/${user.image}`}
                       alt="photo"
                     />
-                  </td>
+                  </td> */}
 
                   <td>
-                    <Button variant="danger" className="btn btn-danger" onClick={() => handleDeleteUser(user.id)}>
+                    <Button
+                      variant="danger"
+                      className="btn btn-danger"
+                      onClick={() => handleDeleteUser(user.id)}>
                       Delete
                     </Button>
                   </td>
                   <td>
                     <Button
-                    variant="warning"
-                    className="btn btn-warning"
+                      variant="warning"
+                      className="btn btn-warning"
                       onClick={() => {
                         setEditUser(user);
                         setShowEditForm(true);
@@ -236,7 +249,7 @@ const UsersTable = () => {
       {showEditForm && (
         <Form
           onSubmit={handleEditUser}
-          className="container">
+          className="container my-5 ">
           <input
             type="hidden"
             name="id"
@@ -254,8 +267,6 @@ const UsersTable = () => {
                   onChange={handleInputChange}
                 />
               </FormGroup>
-            </Col>
-            <Col>
               <FormGroup>
                 <Label for="email">Email:</Label>
                 <Input
@@ -265,14 +276,23 @@ const UsersTable = () => {
                   onChange={handleInputChange}
                 />
               </FormGroup>
+            </Col>
+            <Col>
+              
               <FormGroup>
-                <Label for="type">Type:</Label>
-                <Input
-                  type="text"
+                <Label for="type">User Type</Label>
+
+                <select
                   name="type"
+                  className="form-select"
                   value={editUser.type}
-                  onChange={handleInputChange}
-                />
+                  onChange={handleInputChange}>
+                  <option value="">Select Type</option>
+                  <option value="user">Supplier</option>
+                  <option value="suppler">Supplier</option>
+                  <option value="clinics">Clinics</option>
+                  <option value="shelter">Shelter</option>
+                </select>
               </FormGroup>
               <FormGroup>
                 <Label for="phone">Phone:</Label>

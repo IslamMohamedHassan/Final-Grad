@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./navbar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,15 +13,24 @@ import { useTranslation } from "react-i18next";
 //component
 const Navtest = () => {
   const [t, i18n] = useTranslation();
+  const [userType,setUserType] = useState("")
+
+  useEffect(() => {
+    if (getSession("login")) {
+      setUserType(getSession("auth").type);
+    }
+  }, []);
+
+  // console.log(getSession("auth").type);
   return (
     <>
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid justify-content-end">
-        <a className="navbar-brand" href="/">
+        <a className="navbar-brand">
           <img
             className="nav navimg"
             src="Images/logo-remo.png"
-            alt="Description of the"
+            alt="."
           />
         </a>
         <button
@@ -105,6 +114,16 @@ const Navtest = () => {
               <li className="nav-item">
                 <a className="nav-link" href="/logout">
                   <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
+                </a>
+              </li>
+            ) : (
+              ""
+            )}
+            { userType == "admin" ? (
+              <li className="nav-item">
+                <a className="nav-link" href="/admin/users">
+                  admin
+                  {/* <FontAwesomeIcon icon={faRightFromBracket} size="lg" /> */}
                 </a>
               </li>
             ) : (

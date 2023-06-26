@@ -152,13 +152,14 @@ console.log(newService);
           <Row>
             <Col>
               <div className="form-group">
-                <label className="my-2">User ID:</label>
+                {/* <label className="my-2">User ID:</label> */}
                 <input
                   type="text"
                   className="form-control"
                   name="user_id"
                   value={newService.user_id}
                   onChange={handleInputChange}
+                  hidden
                 />
               </div>
 
@@ -262,7 +263,7 @@ console.log(newService);
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className="form-group my-2">
                 <label className="my-2">Image:</label>
                 <input
                   type="file"
@@ -275,7 +276,7 @@ console.log(newService);
 
               <button
                 type="submit"
-                className="btn btn-primary">
+                className="btn btn-primary mb-3">
                 {isLoading ? (
                   <Spinner
                     animation="border"
@@ -287,7 +288,7 @@ console.log(newService);
               </button>
               <button
                 type="button"
-                className="btn btn-secondary ml-2"
+                className="btn btn-secondary ml-2 mb-3 ms-3"
                 onClick={() => setShowAddForm(false)}>
                 Cancel
               </button>
@@ -296,7 +297,7 @@ console.log(newService);
         </form>
       )}
       {showEditForm && (
-        <form onSubmit={handleEditSubmit}>
+        <form onSubmit={handleEditSubmit} className="container">
           <Row>
             <Col>
               <div className="form-group">
@@ -411,7 +412,7 @@ console.log(newService);
                 <label className="my-2">Image:</label>
                 <input
                   type="file"
-                  className="form-control-file"
+                  className="form-control-file  my-3"
                   name="image"
                   // onChange={handleEditImageChange}
                   ref={fileInputRef}
@@ -420,7 +421,7 @@ console.log(newService);
 
               <button
                 type="submit"
-                className="btn btn-primary">
+                className="btn btn-primary mb-3">
                 {isLoading ? (
                   <Spinner
                     animation="border"
@@ -432,7 +433,7 @@ console.log(newService);
               </button>
               <button
                 type="button"
-                className="btn btn-secondary ml-2"
+                className="btn btn-secondary ml-2 mb-3 ms-3"
                 onClick={() => setShowEditForm(false)}>
                 Cancel
               </button>
@@ -445,7 +446,7 @@ console.log(newService);
         striped
         bordered
         hover
-        className="container admin-table">
+        className="container admin-table mb-5">
         <thead>
           <tr>
             <th>ID</th>

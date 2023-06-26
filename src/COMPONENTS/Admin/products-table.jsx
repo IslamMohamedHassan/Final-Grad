@@ -235,7 +235,7 @@ const ProductsTable = () => {
         {isLoading ? (
           <Spinner animation="border" />
         ) : (
-          <Table striped bordered hover className='admin-table container'>
+          <Table striped bordered hover className='admin-table container mb-5'>
             <thead>
               <tr>
                 <th>ID</th>
@@ -279,7 +279,7 @@ const ProductsTable = () => {
           </Table>
         )}
         {showEditForm && (
-          <Form onSubmit={handleEditProduct}  className="container">
+          <Form onSubmit={handleEditProduct}  className="container my-5">
             <Form.Group as={Row} className="mb-3">
               <Form.Label column sm={2}>
                 Name
